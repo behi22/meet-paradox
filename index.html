@@ -1,0 +1,441 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Paradox · five AI voices on one live call, by Behbod Babai</title>
+<meta name="description" content="Paradox puts five AI voices on one live call: your own board of advisers, each with their own role, or five friends talking about anything. They talk to each other, push back, look things up with real sources, and you just speak to join in. Built by Behbod Babai on the Alebex voice engine.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://behi22.github.io/meet-paradox/">
+<meta property="og:title" content="Paradox">
+<meta property="og:description" content="Five AI voices on one live call: a board of advisers that argues a decision out with you, or five friends talking about anything. Watch the full demo.">
+<meta property="og:image" content="https://behi22.github.io/meet-paradox/assets/share.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Paradox: five AI voices on one live call, shown as one line in five colours">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Paradox">
+<meta name="twitter:description" content="Five AI voices on one live call: a board of advisers that argues a decision out with you, or five friends talking about anything. Watch the full demo.">
+<meta name="twitter:image" content="https://behi22.github.io/meet-paradox/assets/share.jpg">
+<meta name="theme-color" content="#0b0d16">
+<link rel="icon" href="assets/favicon-32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    color-scheme: dark;
+    --bg: #0b0d16;
+    --panel: rgba(22, 26, 46, .62);
+    --line: rgba(160, 170, 220, .13); --line2: rgba(160, 170, 220, .26);
+    --fg: #eef1fb; --mu: #8d94ad; --mu2: #6b7290;
+    --ac: #5ec8f2; --acbg: rgba(94, 200, 242, .11);
+    --s1: #5ec8f2; --s2: #f5b54a; --s3: #a58bff; --s4: #ff7f96; --s5: #4fdc9e;
+    --r: 18px;
+    --font: Figtree, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  body {
+    margin: 0; color: var(--fg); font: 400 16px/1.6 var(--font); background: var(--bg);
+    background-image:
+      radial-gradient(1000px 560px at 70% -8%, rgba(70, 82, 170, .34), transparent 68%),
+      radial-gradient(760px 520px at -8% 22%, rgba(94, 200, 242, .08), transparent 70%),
+      radial-gradient(900px 640px at 50% 118%, rgba(165, 139, 255, .12), transparent 70%);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { text-wrap: balance; }
+  p { text-wrap: pretty; }
+  a { color: inherit; text-decoration: none; }
+  .wrap { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 28px; }
+  svg.i { width: 18px; height: 18px; flex: none; }
+
+  /* Buttons */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; height: 46px; padding: 0 22px;
+         border-radius: 999px; border: 1px solid var(--line2); background: rgba(255, 255, 255, .04); color: var(--fg);
+         font: 600 15px/1 var(--font); white-space: nowrap; transition: background .18s, border-color .18s; }
+  .btn:hover, .btn:focus-visible { border-color: rgba(238, 241, 251, .5); background: rgba(255, 255, 255, .08); outline: none; }
+  .btn.primary { background: var(--fg); border-color: var(--fg); color: #0b0d16; }
+  .btn.primary:hover, .btn.primary:focus-visible { background: #ffffff; border-color: #ffffff; }
+  .btn.sm { height: 38px; padding: 0 15px; font-size: 14px; }
+
+  /* Top bar */
+  .top { position: sticky; top: 0; z-index: 10; backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+         background: rgba(11, 13, 22, .66); border-bottom: 1px solid var(--line); }
+  .top .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .brand { display: inline-flex; align-items: center; gap: 11px; font-size: 18px; font-weight: 700; letter-spacing: -.01em; }
+  .brand svg { width: 32px; height: 32px; flex: none; }
+  .nav { display: flex; align-items: center; gap: 6px; }
+  .nav a.link { padding: 8px 12px; border-radius: 8px; color: var(--mu); font-size: 14px; font-weight: 500; }
+  .nav a.link:hover { color: var(--fg); background: rgba(255, 255, 255, .05); }
+
+  /* Hero */
+  .hero { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 48px; padding: 76px 0 64px; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 10px; height: 30px; padding: 0 13px; border-radius: 999px;
+             border: 1px solid var(--line2); background: rgba(255, 255, 255, .04); color: var(--fg); font-size: 13px; font-weight: 600; }
+  .eyebrow .bars { display: inline-flex; gap: 3px; }
+  .eyebrow .bars i { width: 9px; height: 2px; border-radius: 2px; }
+  h1 { margin: 22px 0 0; font-size: clamp(52px, 7.2vw, 92px); line-height: .98; letter-spacing: -.04em; font-weight: 800;
+       background: linear-gradient(180deg, #ffffff 30%, #b8c0dc); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .lead { margin: 24px 0 0; max-width: 31em; color: var(--mu); font-size: 19px; line-height: 1.6; }
+  .ctas { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px 22px; margin-top: 30px; color: var(--mu2); font-size: 14px; font-weight: 500; }
+  .meta span { display: inline-flex; align-items: center; gap: 8px; }
+  .meta span::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--mu); opacity: .7; }
+
+  /* The call, live in the hero: the caption, the line, the five */
+  .call { position: relative; display: flex; flex-direction: column; justify-content: center; min-height: 330px;
+          padding: 34px 26px 26px; border-radius: 24px; background: radial-gradient(ellipse 80% 70% at 50% 60%, rgba(40, 46, 80, .55), transparent 75%), rgba(11, 13, 22, .55);
+          border: 1px solid var(--line); box-shadow: 0 40px 90px -36px rgba(0, 0, 0, .8); }
+  .call .topic { position: absolute; top: 16px; left: 20px; margin: 0; font-size: 12.5px; color: var(--fg); }
+  .call .topic span { color: var(--mu); }
+  .cap { min-height: 100px; display: flex; flex-direction: column; justify-content: flex-end; text-align: center; }
+  .cap .who { margin: 0 0 6px; font-size: 13px; font-weight: 600; color: var(--who, var(--fg)); }
+  .cap .words { margin: 0; font-size: 21px; line-height: 1.35; font-weight: 500; letter-spacing: -.01em; }
+  .cap .w { color: rgba(238, 241, 251, .22); transition: color .25s; }
+  .cap .w.on { color: var(--fg); }
+  .call canvas { display: block; width: 100%; height: 70px; margin-top: 18px; }
+  .five { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); text-align: center; margin-top: 4px; }
+  .five b { display: block; font-size: 13.5px; font-weight: 600; opacity: .7; transition: opacity .25s; }
+  .five b.on { opacity: 1; }
+  .five small { display: block; font-size: 11.5px; color: var(--mu); }
+
+  /* Sections */
+  section { padding: 96px 0 0; }
+  .head { margin-bottom: 36px; }
+  .kicker { margin: 0 0 14px; color: var(--ac); font-size: 13px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+  h2 { margin: 0; font-size: clamp(32px, 4.2vw, 46px); line-height: 1.1; letter-spacing: -.03em; font-weight: 800; }
+  .head p:not(.kicker) { margin: 16px 0 0; color: var(--mu); font-size: 18px; line-height: 1.55; }
+
+  /* Demo */
+  .demo { display: grid; grid-template-columns: minmax(0, 1fr) 330px; gap: 18px; align-items: stretch; }
+  .player { border-radius: var(--r); padding: 8px; background: var(--panel); border: 1px solid var(--line); box-shadow: 0 40px 90px -30px rgba(0, 0, 0, .7); }
+  .player video { display: block; width: 100%; aspect-ratio: 16 / 10; border-radius: 12px; background: #000; }
+  .chapters { display: flex; flex-direction: column; border-radius: var(--r); background: var(--panel); border: 1px solid var(--line); overflow: hidden; }
+  .chapters h3 { margin: 0; padding: 16px 18px 12px; font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--mu); border-bottom: 1px solid var(--line); }
+  .chapters ol { list-style: none; margin: 0; padding: 6px; overflow: auto; flex: 1; }
+  .chapters button { position: relative; display: grid; grid-template-columns: 46px 1fr; align-items: center; gap: 10px; width: 100%; padding: 9px 12px;
+                     border: 0; border-radius: 10px; background: transparent; color: var(--fg); text-align: left; cursor: pointer; font: 500 14.5px/1.35 var(--font); }
+  .chapters button:hover, .chapters button:focus-visible { background: rgba(255, 255, 255, .05); outline: none; }
+  .chapters .t { font: 600 12.5px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; color: var(--mu); }
+  .chapters button[aria-current="true"] { background: var(--acbg); }
+  .chapters button[aria-current="true"] .t { color: var(--ac); }
+  .chapters button[aria-current="true"]::before { content: ""; position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px; border-radius: 3px; background: var(--ac); }
+
+  /* Bento */
+  .bento { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 16px; }
+  .tile { grid-column: span 2; display: flex; flex-direction: column; min-width: 0; border-radius: var(--r); background: var(--panel);
+          border: 1px solid var(--line); overflow: hidden; transition: border-color .2s; }
+  .tile:hover { border-color: var(--line2); }
+  .tile.big { grid-column: span 3; }
+  .shot { aspect-ratio: 16 / 10; overflow: hidden; border-bottom: 1px solid var(--line); background: #0b0d16; }
+  .shot img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .tile .txt { padding: 20px 22px 24px; }
+  .tile h3 { margin: 0 0 8px; font-size: 18px; line-height: 1.3; letter-spacing: -.01em; font-weight: 700; }
+  .tile p { margin: 0; color: var(--mu); font-size: 15px; line-height: 1.55; }
+
+  /* Your own board */
+  .tile.cta { grid-column: 1 / -1; flex-direction: row; align-items: center; justify-content: center; gap: 52px; padding: 48px 52px;
+              background: radial-gradient(560px 360px at 76% 50%, rgba(165, 139, 255, .12), transparent 70%), var(--panel); }
+  .tile.cta .txt { flex: 1 1 0; max-width: 440px; padding: 0; }
+  .tile.cta h3 { margin: 0; font-size: 28px; letter-spacing: -.02em; }
+  .tile.cta p { margin-top: 14px; font-size: 16.5px; }
+  .board { flex: none; width: 580px; padding: 30px 26px 22px; border-radius: 18px; background: rgba(11, 13, 22, .6); border: 1px solid var(--line); }
+  .board .ln { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+  .board .ln i { height: 2px; border-radius: 2px; opacity: .75; }
+  .board .ln i.up { height: 3px; opacity: 1; box-shadow: 0 0 12px currentColor; }
+  .board .five { margin-top: 16px; gap: 10px; }
+  .board .five b { font-size: 15px; }
+  .board .five small { margin-top: 3px; font-size: 12.5px; line-height: 1.35; }
+
+  /* About */
+  .about { display: grid; grid-template-columns: auto 1fr auto; grid-template-areas: "pic who btns" "pic say say"; align-items: center;
+           gap: 14px 26px; padding: 30px 32px; border-radius: 22px; background: var(--panel); border: 1px solid var(--line); }
+  .about img { grid-area: pic; width: 76px; height: 76px; border-radius: 50%; border: 2px solid rgba(94, 200, 242, .45); }
+  .about .who { grid-area: who; }
+  .about h3 { margin: 0; font-size: 22px; letter-spacing: -.02em; }
+  .about .role { margin: 4px 0 0; color: var(--ac); font-weight: 600; font-size: 14px; }
+  .about .say { grid-area: say; margin: 0; color: var(--mu); font-size: 15.5px; }
+  .about .say span { display: block; }
+  .about .say a { color: var(--fg); text-decoration: underline; text-decoration-color: rgba(94, 200, 242, .5); text-underline-offset: 3px; }
+  .about .btns { grid-area: btns; display: flex; gap: 10px; }
+  section.by { padding-top: 48px; }
+  main.wrap { padding-bottom: 96px; }
+
+  @media (max-width: 1020px) {
+    .hero { grid-template-columns: 1fr; gap: 40px; }
+    .demo { grid-template-columns: 1fr; }
+    .chapters ol { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .tile, .tile.big { grid-column: auto; }
+    .tile.cta { flex-direction: column; align-items: stretch; gap: 32px; padding: 40px 36px; }
+    .board { width: 100%; }
+    .about { grid-template-columns: auto 1fr; grid-template-areas: "pic who" "pic say" "btns btns"; }
+  }
+  @media (max-width: 720px) {
+    body { font-size: 15.5px; }
+    .wrap { padding: 0 18px; }
+    .nav a.link { display: none; }
+    .hero { gap: 30px; padding: 28px 0 40px; }
+    .lead { font-size: 17px; }
+    .ctas .btn { flex: 1 1 auto; }
+    .call { min-height: 290px; padding: 40px 14px 20px; }
+    .cap .words { font-size: 17px; }
+    .five b { font-size: 12px; }
+    .five small { font-size: 10.5px; }
+    section { padding-top: 64px; }
+    .head { margin-bottom: 24px; }
+    .kicker { margin-bottom: 10px; }
+    .head p:not(.kicker) { margin-top: 12px; font-size: 16.5px; }
+    .player { padding: 5px; border-radius: 14px; }
+    .player video { border-radius: 10px; }
+    .chapters ol { grid-template-columns: 1fr; }
+    .bento { grid-template-columns: 1fr; gap: 12px; }
+    .tile.cta { padding: 28px 18px 30px; }
+    .board { padding: 22px 18px 18px; }
+    .board .five { grid-template-columns: 1fr; gap: 0; text-align: left; margin-top: 14px; }
+    .board .five span { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding: 9px 0; border-top: 1px solid var(--line); }
+    .board .five span:first-child { border-top: 0; }
+    .board .five small { margin: 0; font-size: 13px; text-align: right; }
+    .about { grid-template-columns: 1fr; grid-template-areas: "pic" "who" "say" "btns"; gap: 14px; padding: 22px; }
+    .about .btns .btn { flex: 1 1 0; }
+    section.by { padding-top: 36px; }
+    main.wrap { padding-bottom: 56px; }
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="#161a2e"/><g fill="none" stroke-linecap="round" stroke-width="3.5"><path d="M6 32H9.5" stroke="#5ec8f2"/><path d="M16 32H19.5" stroke="#f5b54a"/><path d="M26 32Q29 16 32 32T38 32" stroke="#a58bff" stroke-width="4.5"/><path d="M44.5 32H48" stroke="#ff7f96"/><path d="M54.5 32H58" stroke="#4fdc9e"/></g></svg>
+      Paradox</a>
+    <nav class="nav">
+      <a class="link" href="#demo">Demo</a>
+      <a class="link" href="#can">What it can do</a>
+      <a class="btn sm" href="https://github.com/behi22/meet-paradox">
+        <svg class="i" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        How it works</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero">
+    <div>
+      <span class="eyebrow"><span class="bars" aria-hidden="true"><i style="background:var(--s1)"></i><i style="background:var(--s2)"></i><i style="background:var(--s3)"></i><i style="background:var(--s4)"></i><i style="background:var(--s5)"></i></span>Live voice AI demo</span>
+      <h1>Paradox.</h1>
+      <p class="lead">Five AI voices on one live call. Make them your board of advisers, each with their own role, or five friends talking about anything. They talk to each other, push back and look things up with real sources, and you just speak to join in.</p>
+      <div class="ctas">
+        <a class="btn primary" href="#demo">
+          <svg class="i" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.5-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg>
+          Watch the demo</a>
+        <a class="btn" href="https://github.com/behi22/meet-paradox">Read the write-up
+          <svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+      <div class="meta"><span>3-minute demo</span><span>Built solo in a week</span><span>Alebex voice engine</span></div>
+    </div>
+    <div class="call" aria-label="Lines from the demo, as the call shows them">
+      <p class="topic"><span>On the table</span> A four-day week</p>
+      <div class="cap" aria-live="off"><p class="who" id="who"></p><p class="words" id="words"></p></div>
+      <canvas id="line" aria-hidden="true"></canvas>
+      <div class="five" id="five"></div>
+    </div>
+  </div>
+
+  <section id="demo">
+    <div class="head">
+      <p class="kicker">The demo</p>
+      <h2>A board meeting, start to finish</h2>
+      <p>Five AI advisers argue out a four-day week with the CEO. Nothing is scripted: every line is said live.</p>
+    </div>
+    <div class="demo">
+      <div class="player">
+        <video id="v" controls preload="metadata" playsinline poster="demo/poster.jpg">
+          <source src="demo/paradox-demo.mp4" type="video/mp4">
+          <track kind="captions" src="demo/paradox-demo.vtt" srclang="en" label="English">
+        </video>
+      </div>
+      <nav class="chapters" aria-label="Chapters">
+        <h3>Chapters</h3>
+        <ol>
+          <li><button data-t="0"><span class="t">0:00</span>Setting up the board</button></li>
+          <li><button data-t="10"><span class="t">0:10</span>The meeting opens</button></li>
+          <li><button data-t="21"><span class="t">0:21</span>Cost against contracts</button></li>
+          <li><button data-t="55"><span class="t">0:55</span>"Priya, what would a pilot cost us?"</button></li>
+          <li><button data-t="75"><span class="t">1:15</span>Talent against burnout</button></li>
+          <li><button data-t="100"><span class="t">1:40</span>"Legal, could this get us in trouble?"</button></li>
+          <li><button data-t="122"><span class="t">2:02</span>A lookup, with real sources</button></li>
+          <li><button data-t="143"><span class="t">2:23</span>"Great on paper, but..."</button></li>
+          <li><button data-t="157"><span class="t">2:37</span>"Let's run the pilot"</button></li>
+          <li><button data-t="177"><span class="t">2:57</span>The transcript and its sources</button></li>
+        </ol>
+      </nav>
+    </div>
+  </section>
+
+  <section id="can">
+    <div class="head">
+      <p class="kicker">Capabilities</p>
+      <h2>What Paradox can do</h2>
+      <p>Join the call and just talk. Every screen here is from the demo, except the last one, a call between friends.</p>
+    </div>
+    <div class="bento">
+      <article class="tile big">
+        <div class="shot"><img src="assets/board.webp" alt="Priya, the finance voice, speaking, with the five names and their roles under the line" loading="lazy"></div>
+        <div class="txt"><h3>Your own board of AI advisers</h3><p>Five voices, five roles: finance, people, legal, operations and marketing. Each argues from its own side, and together they work toward a decision.</p></div>
+      </article>
+      <article class="tile big">
+        <div class="shot"><img src="assets/setup.webp" alt="The setup drawer: board meeting chosen, the question to open on, and each person's name, role, description and voice" loading="lazy"></div>
+        <div class="txt"><h3>Set it up in seconds</h3><p>A board meeting or a call between friends, the question to open on, and who the five are: names, roles, personalities and voices.</p></div>
+      </article>
+      <article class="tile">
+        <div class="shot"><img src="assets/talk.webp" alt="The transcript: Leo cut off, then the CEO asking Legal a question, and Daniel answering" loading="lazy"></div>
+        <div class="txt"><h3>Just talk to cut in</h3><p>No button. Start speaking and whoever is talking stops. Say a name, or a role like "Legal", and that person answers you.</p></div>
+      </article>
+      <article class="tile">
+        <div class="shot"><img src="assets/lookup.webp" alt="Sofia speaking while a lookup runs, marked under her name" loading="lazy"></div>
+        <div class="txt"><h3>Look things up, live</h3><p>When a fact matters, one of them checks the web while the talk carries on.</p></div>
+      </article>
+      <article class="tile">
+        <div class="shot"><img src="assets/pushback.webp" alt="Priya pushing back: that sounds great on paper" loading="lazy"></div>
+        <div class="txt"><h3>Real back and forth</h3><p>They agree, push back and build on each other, and now and then one cuts in on another.</p></div>
+      </article>
+      <article class="tile">
+        <div class="shot"><img src="assets/sources.webp" alt="A lookup in the transcript: the study it found and its two sources" loading="lazy"></div>
+        <div class="txt"><h3>Every source, kept</h3><p>The full transcript, with what each lookup found and where it came from.</p></div>
+      </article>
+      <article class="tile">
+        <div class="shot"><img src="assets/card.webp" alt="Hovering Priya's name shows who she is" loading="lazy"></div>
+        <div class="txt"><h3>Know who's who</h3><p>Hover a name to see who they are. Twelve voices to pick from, each with a sample.</p></div>
+      </article>
+      <article class="tile">
+        <div class="shot"><img src="assets/friends.webp" alt="A call between five friends about why octopuses are so smart" loading="lazy"></div>
+        <div class="txt"><h3>Or five friends, any topic</h3><p>Switch to friends and they talk about anything, then change the subject on their own.</p></div>
+      </article>
+      <article class="tile cta">
+        <div class="txt">
+          <h3>Imagine your own board</h3>
+          <p>A CEO could have a board of AI advisers on call, finance, HR, legal and more, each with its own expertise, arguing a decision through before the real meeting. Paradox is a small, working showcase of that idea.</p>
+        </div>
+        <div class="board" aria-hidden="true">
+          <div class="ln"><i style="background:var(--s1)"></i><i style="background:var(--s2)"></i><i class="up" style="background:var(--s3);color:var(--s3)"></i><i style="background:var(--s4)"></i><i style="background:var(--s5)"></i></div>
+          <div class="five">
+            <span><b style="color:var(--s1)">Finance</b><small>cost and margins</small></span>
+            <span><b style="color:var(--s2)">People</b><small>morale and hiring</small></span>
+            <span><b class="on" style="color:var(--s3)">Legal</b><small>contracts, risk</small></span>
+            <span><b style="color:var(--s4)">Operations</b><small>the daily work</small></span>
+            <span><b style="color:var(--s5)">Marketing</b><small>brand and story</small></span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="by">
+    <div class="about">
+      <img src="https://avatars.githubusercontent.com/u/46956389?s=160&amp;v=4" alt="Behbod Babai">
+      <div class="who">
+        <h3>Built by Behbod Babai</h3>
+        <p class="role">Full-stack engineer building voice AI, Vancouver</p>
+      </div>
+      <p class="say"><span>I built Paradox on my own, in my own time, on the Alebex voice engine, using only its public developer docs and APIs.</span> <span><a href="https://github.com/behi22/meet-paradox">The repo</a> has the full story: how it works and the hard parts.</span></p>
+      <div class="btns">
+        <a class="btn" href="https://github.com/behi22">
+          <svg class="i" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          GitHub</a>
+        <a class="btn" href="https://www.linkedin.com/in/behbod-babai">
+          <svg class="i" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z"/></svg>
+          LinkedIn</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script>
+  // Chapters: jump on click, and mark the one playing.
+  const v = document.getElementById('v');
+  const btns = [...document.querySelectorAll('.chapters button')];
+  btns.forEach(b => b.addEventListener('click', () => { v.currentTime = +b.dataset.t; v.play().catch(() => {}); }));
+  const mark = () => {
+    let cur = btns[0];
+    for (const b of btns) if (v.currentTime >= +b.dataset.t - 0.5) cur = b;
+    btns.forEach(b => b.setAttribute('aria-current', b === cur ? 'true' : 'false'));
+  };
+  v.addEventListener('timeupdate', mark); mark();
+
+  // The hero: lines from the demo, said in turn, with the speaker's stretch of the line moving as they talk.
+  const seats = [
+    { n: 'Priya', r: 'Finance', c: '#5ec8f2' }, { n: 'Marcus', r: 'People', c: '#f5b54a' }, { n: 'Daniel', r: 'Legal', c: '#a58bff' },
+    { n: 'Sofia', r: 'Operations', c: '#ff7f96' }, { n: 'Leo', r: 'Marketing', c: '#4fdc9e' },
+  ];
+  const said = [
+    [0, "If we're paying full salaries for twenty percent less time, I need to see how that hits our margins before we commit."],
+    [2, "Priya's right to worry about the cost, but from my side, the bigger risk is the contracts."],
+    [-1, 'Legal, is there anything here that could get us in trouble?'],
+    [2, 'The main thing is those service level agreements.'],
+    [-1, 'Can someone check what the big four-day week trials actually found?'],
+    [3, 'I can look that up for you right now.'],
+    [1, "If we just cram five days of work into four, we'll just be trading one kind of burnout for another."],
+    [4, "We frame this as an investment in them, not a test of their speed."],
+  ];
+  const five = document.getElementById('five');
+  five.innerHTML = seats.map(s => `<span><b style="color:${s.c}">${s.n}</b><small>${s.r}</small></span>`).join('');
+  const names = [...five.querySelectorAll('b')];
+  const who = document.getElementById('who');
+  const words = document.getElementById('words');
+  const canvas = document.getElementById('line');
+  const ctx = canvas.getContext('2d');
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let k = 0, started = 0, level = 0, running = true, raf = 0;
+
+  function show(i, t) {
+    const [s, text] = said[i];
+    who.textContent = s < 0 ? 'You' : seats[s].n;
+    who.style.setProperty('--who', s < 0 ? '#eef1fb' : seats[s].c);
+    words.innerHTML = text.split(' ').map(w => `<span class="w">${w} </span>`).join('');
+    names.forEach((b, j) => b.classList.toggle('on', j === s));
+    started = t;
+  }
+  function draw(t) {
+    const dpr = Math.min(devicePixelRatio || 1, 2), W = canvas.clientWidth, H = canvas.clientHeight;
+    if (canvas.width !== Math.round(W * dpr)) { canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr); }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, W, H);
+    const [s, text] = said[k];
+    const n = text.split(' ').length, dur = n / 2.9 * 1000, el = t - started;
+    const on = still ? n : Math.min(n, Math.ceil(el / 1000 * 2.9) + 1);
+    [...words.children].forEach((w, j) => w.classList.toggle('on', j < on));
+    const talking = !still && el < dur;
+    level += ((talking ? 1 : 0) - level) * 0.08;
+    const y0 = H / 2, seg = W / 5, tt = t / 1000;
+    seats.forEach((p, j) => {
+      const x0 = seg * j + (j ? 4 : 0), x1 = seg * (j + 1) - (j < 4 ? 4 : 0), me = j === s;
+      ctx.beginPath();
+      for (let x = x0; x <= x1; x += 2) {
+        const env = Math.sin(((x - x0) / (x1 - x0)) * Math.PI);
+        let y = y0 + Math.sin(x * 0.03 + tt * 0.9) * 1.1;
+        if (me) y += (Math.sin(x * 0.07 - tt * 7) * 0.6 + Math.sin(x * 0.13 + tt * 5) * 0.35) * level * 20 * env;
+        x === x0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = p.c; ctx.globalAlpha = me ? 1 : 0.5; ctx.lineWidth = me ? 2.4 : 1.5; ctx.lineCap = 'round';
+      ctx.shadowColor = p.c; ctx.shadowBlur = me ? 14 : 0;
+      ctx.stroke(); ctx.shadowBlur = 0; ctx.globalAlpha = 1;
+    });
+    if (!still && el > dur + 1400) { k = (k + 1) % said.length; show(k, t); }
+  }
+  function loop(t) { draw(t); if (running && !still) raf = requestAnimationFrame(loop); }
+  show(0, performance.now());
+  requestAnimationFrame(loop);
+  if (!still && 'IntersectionObserver' in window) {
+    new IntersectionObserver(([e]) => {
+      if (e.isIntersecting && !running) { running = true; started = performance.now(); raf = requestAnimationFrame(loop); }
+      else if (!e.isIntersecting) { running = false; cancelAnimationFrame(raf); }
+    }).observe(canvas);
+  }
+</script>
+</body>
+</html>
