@@ -4,7 +4,7 @@ Five AI voices on one live call. Make them your own board of advisers, each with
 
 https://github.com/user-attachments/assets/f325d1da-7bd0-4ed5-9948-e5f944c50742
 
-**[Watch the full demo (3 min)](https://behi22.github.io/meet-paradox/)**
+**[Watch the full demo (3 min)](https://behi22.github.io/meet-paradox/)** · [See the LinkedIn post](https://www.linkedin.com/feed/update/urn:li:activity:7531562268321308672/) · [Also see: Bex](https://github.com/behi22/meet-bex)
 
 ## Why I built it
 
